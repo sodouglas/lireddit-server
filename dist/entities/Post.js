@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Post.prototype, "id", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ type: 'text' }),
     __metadata("design:type", String)
 ], Post.prototype, "title", void 0);
 __decorate([

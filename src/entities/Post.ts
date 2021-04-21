@@ -5,7 +5,7 @@ export class Post {
   @PrimaryKey()
   id!:number;
   
-  @Property()
+  @Property({type: 'text'})
   title!: string;
 
   // Author
@@ -16,6 +16,7 @@ export class Post {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
+  // const post = new Post('my first post')
   constructor(title: string) {
     this.title = title;
   }
