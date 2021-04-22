@@ -14,3 +14,12 @@ Source: [Fullstack React GraphQL TypeScript Tutorial](https://www.youtube.com/wa
 * MikroORM/TypeORM
 * TypeScript
 * URQL/Apollo
+
+# Helpful stuff
+
+sudo lsof -i :4000
+kill -9 $PID
+OR
+npx kill-port 4000
+OR
+pkill -f node
