@@ -17,9 +17,13 @@ Source: [Fullstack React GraphQL TypeScript Tutorial](https://www.youtube.com/wa
 
 # Helpful stuff
 
-sudo lsof -i :4000
-kill -9 $PID
+`sudo lsof -i :4000`
+`kill -9 $PID`
 OR
-npx kill-port 4000
+`npx kill-port 4000`
 OR
-pkill -f node
+`pkill -f node`
+
+`sudo -u postgres psql lireddit`
+
+`pg_ctl -D /home/linuxbrew/.linuxbrew/var/postgres start`

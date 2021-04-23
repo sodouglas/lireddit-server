@@ -24,7 +24,7 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
-    type_graphql_1.Field(() => String),
+    type_graphql_1.Field(),
     core_1.Property({ type: "text", unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
@@ -34,12 +34,12 @@ __decorate([
 ], User.prototype, "password", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property(),
+    core_1.Property({ type: "date" }),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
-    core_1.Property({ onUpdate: () => new Date() }),
+    core_1.Property({ type: "date", onUpdate: () => new Date() }),
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 User = __decorate([

@@ -1,14 +1,14 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, Int, ObjectType } from "type-graphql";
 
-@ObjectType() // converts to GraphQL
+@ObjectType()
 @Entity()
 export class User {
   @Field(() => Int)
   @PrimaryKey()
   id!: number;
 
-  @Field(() => String)
+  @Field()
   @Property({ type: "text", unique: true })
   username!: string;
 
@@ -16,15 +16,10 @@ export class User {
   password!: string;
 
   @Field(() => String)
-  @Property()
+  @Property({ type: "date" })
   createdAt: Date = new Date();
 
   @Field(() => String)
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt: Date = new Date();
-
-  // // const post = new Post('my first post')
-  // constructor(title: string) {
-  //   this.title = title;
-  // }
 }
