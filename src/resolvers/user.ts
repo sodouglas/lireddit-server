@@ -50,7 +50,8 @@ export class UserResolver {
   async register(
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { em }: MyContext
-  ): Promise<UserResponse> {    // ts: return promise for UserResponse
+  ): Promise<UserResponse> {
+    // ts: return promise for UserResponse
     if (options.username.length <= 2) {
       return {
         errors: [
@@ -78,17 +79,20 @@ export class UserResolver {
       password: hashedPassword,
     });
     try {
-        await em.persistAndFlush(user);
+      await em.persistAndFlush(user);
     } catch (err) {
-        if (err.code === '23505') {   //} || err.detail.includes("already exists")) {
-            // duplicate name error
-            return {
-                errors: [{
-                    field: 'username',
-                    message: 'username is already taken'
-                }]
-            }
-        }
+      if (err.code === "23505") {
+        //} || err.detail.includes("already exists")) {
+        // duplicate name error
+        return {
+          errors: [
+            {
+              field: "username",
+              message: "username is already taken",
+            },
+          ],
+        };
+      }
     }
     return { user };
   }
@@ -96,9 +100,9 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em }: MyContext
+    @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { username: options.username });    // pls use await for methods that return Promises
+    const user = await em.findOne(User, { username: options.username }); // pls use await for methods that return Promises
     if (!user) {
       return {
         errors: [
@@ -120,6 +124,8 @@ export class UserResolver {
         ],
       };
     }
+
+    req.session.userId = user.id;
     return { user };
   }
 }

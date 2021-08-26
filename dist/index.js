@@ -16,6 +16,7 @@ require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
 const mikro_orm_config_1 = __importDefault(require("./mikro-orm.config"));
 const core_1 = require("@mikro-orm/core");
+const constants_1 = require("./constants");
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
@@ -39,22 +40,21 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
             httpOnly: true,
-            secure: true,
+            secure: constants_1.__prod__,
+            sameSite: 'lax'
         },
         secret: "jfuhoufihawefh",
         resave: false,
+        saveUninitialized: false,
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield type_graphql_1.buildSchema({
             resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: () => ({ em: orm.em }),
+        context: ({ req, res }) => ({ em: orm.em, req, res }),
     });
     apolloServer.applyMiddleware({ app });
-    app.get("/", (_, res) => {
-        res.send("Welcome!");
-    });
     app.listen(4000, () => {
         console.log("server started on http://localhost:4000");
     });

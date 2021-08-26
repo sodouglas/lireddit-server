@@ -2,16 +2,18 @@ import { Post } from "../entities/Post";
 import { MyContext } from "src/types";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 
-// CRUD operations with GraphQL
 @Resolver()
 export class PostResolver {
-  // Returns all Posts
+
+  // get (all) Posts
+  // -------------
   @Query(() => [Post])
   posts(@Ctx() { em }: MyContext): Promise<Post[]> {
     return em.find(Post, {});
   }
 
-  // Read Post by 'id'
+  // get Post by 'id'
+  // ----------------
   @Query(() => Post, { nullable: true })
   post(
     @Arg("id", () => Int) id: number,
@@ -20,7 +22,8 @@ export class PostResolver {
     return em.findOne(Post, { id });
   }
 
-  // Create Post by 'id'
+  // create Post by 'id'
+  // -------------------
   @Mutation(() => Post)
   async createPost(
     @Arg("title") title: string,
@@ -31,7 +34,8 @@ export class PostResolver {
     return post;
   }
 
-  // Update Post by 'id'
+  // update Post by 'id'
+  // -------------------
   @Mutation(() => Post, { nullable: true })
   async updatePost(
     @Arg("id") id: number,
@@ -49,7 +53,8 @@ export class PostResolver {
     return post;
   }
 
-  // Delete Post by 'id'
+  // delete Post by 'id'
+  // -------------------
   @Mutation(() => Boolean)
   async deletePost(
     @Arg("id") id: number,

@@ -4,8 +4,6 @@ import { Field, Int, ObjectType } from "type-graphql";
 @ObjectType() // converts to GraphQL
 @Entity()
 export class Post {
-  // TODO: might need to add types for each Field
-
   @Field(() => Int)
   @PrimaryKey()
   id!:number;
