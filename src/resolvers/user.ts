@@ -20,9 +20,7 @@ class UsernamePasswordInput {
   password: string;
 }
 
-/**
- * Error field with message (description)
- */
+// error field with description
 @ObjectType()
 class FieldError {
   @Field()
@@ -32,9 +30,7 @@ class FieldError {
   message: string;
 }
 
-/**
- * Responds with either Error or User
- */
+// responds with type User or Error
 @ObjectType()
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
@@ -51,7 +47,6 @@ export class UserResolver {
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
-    // ts: return promise for UserResponse
     if (options.username.length <= 2) {
       return {
         errors: [

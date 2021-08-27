@@ -1,18 +1,18 @@
 import { Post } from "../entities/Post";
-import { MyContext } from "src/types";
-import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import { MyContext } from "src/types";  // access to orm
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";  // schema
 
 @Resolver()
 export class PostResolver {
 
-  // get (all) Posts
+  // get (all) posts
   // -------------
   @Query(() => [Post])
   posts(@Ctx() { em }: MyContext): Promise<Post[]> {
     return em.find(Post, {});
   }
 
-  // get Post by 'id'
+  // get post by 'id'
   // ----------------
   @Query(() => Post, { nullable: true })
   post(
@@ -22,7 +22,7 @@ export class PostResolver {
     return em.findOne(Post, { id });
   }
 
-  // create Post by 'id'
+  // create post by 'id'
   // -------------------
   @Mutation(() => Post)
   async createPost(
@@ -39,7 +39,7 @@ export class PostResolver {
   @Mutation(() => Post, { nullable: true })
   async updatePost(
     @Arg("id") id: number,
-    @Arg("title", () => String, { nullable: true }) title: string,
+    @Arg("title", () => String, { nullable: true }) title: string,  // title can be optional (nullable)
     @Ctx() { em }: MyContext
   ): Promise<Post | null> {
     const post = await em.findOne(Post, { id });
