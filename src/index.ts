@@ -9,13 +9,13 @@ import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
-// import redis from "redis";
-// import session from "express-session";
-// import connectRedis from "connect-redis";
+import redis from "redis";
+import session from "express-session";
+import connectRedis from "connect-redis";
 
 const main = async () => {
-
   // initialise database
+  // -------------------
   const orm = await MikroORM.init(mikroOrmConfig);
   await orm.getMigrator().up();
 
@@ -26,8 +26,8 @@ const main = async () => {
   // await generator.createSchema();
   // await generator.updateSchema();
 
-  // // mikroORM way of creating/persisting/flushing entities
-  // // -----------------------------------------------------
+  // // "normal" mikroORM way of creating/persisting/flushing entities
+  // // --------------------------------------------------------------
   // const post = orm.em.create(Post, { title: "my first post" });
   // await orm.em.persistAndFlush(post);
   // await orm.em.nativeInsert(Post, {title: "my first post2"});
@@ -37,39 +37,40 @@ const main = async () => {
 
   const app = express();
 
-  // // caching
-  // // -------
-  // const RedisStore = connectRedis(session);
-  // const redisClient = redis.createClient();
+  const RedisStore = connectRedis(session);
+  const redisClient = redis.createClient();
 
-  // // Express must connect Redis session before Apollo middleware (for redis to be used inside Apollo)
-  // app.use(
-  //   session({
-  //     name: 'qid',
-  //     store: new RedisStore({ 
-  //       client: redisClient,
-  //       disableTouch: true 
-  //     }),
-  //     cookie: {
-  //       maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 year cookie
-  //       httpOnly: true, // makes cookie unretrievable on frontend
-  //       secure: __prod__,   // https only
-  //       sameSite: 'lax' // csrf
-  //     },
-  //     secret: "jfuhoufihawefh",
-  //     resave: false,
-  //     saveUninitialized: false,
-  //   })
-  // );
+  // connect redis session to express (prior to apollo config)
+  // - order of middleware = order to run
+  // - make sure to run redis-server
+  // ---------------------------------------------------------
+  app.use(
+    session({
+      name: "qid",
+      store: new RedisStore({
+        client: redisClient,
+        disableTouch: true,
+      }),
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 year cookie
+        httpOnly: true, // makes cookie unretrievable on frontend
+        secure: __prod__, // https only
+        sameSite: "lax", // csrf
+      },
+      secret: "hamburger",
+      resave: false,
+      saveUninitialized: false,
+    })
+  );
 
-  // Apollo server (GraphQL endpoints)
+  // apollo server (GraphQL endpoints)
   // ---------------------------------
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({req, res}): MyContext => ({ em: orm.em, req, res }),
+    context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
   });
 
   apolloServer.applyMiddleware({ app });

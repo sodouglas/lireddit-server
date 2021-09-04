@@ -10,10 +10,13 @@
     "dev-ts": "nodemon --exec ts-node src/index.ts",
     "watch": "tsc -w",
     "clean": "rm -rf ./dist",
-    "create-migration": "npx mikro-orm migration:create"
+    "create-migration": "npx mikro-orm migration:create",
+    "kill-psql": "npx kill-port 5432",
+    "psql": "sudo service postgresql start",
+    "redis": "redis-server"
   },
   "keywords": [],
-  "author": "",
+  "author": "Douglas So <so.douglas98@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@mikro-orm/cli": "^4.5.3",
@@ -27,6 +30,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "graphql": "^15.5.0",
+    "jquery": "^3.6.0",
     "pg": "^8.6.0",
     "redis": "^3.1.2",
     "reflect-metadata": "^0.1.13",

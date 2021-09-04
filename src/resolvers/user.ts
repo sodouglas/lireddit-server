@@ -42,7 +42,7 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-  @Mutation(() => UserResponse) // return type
+  @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { em }: MyContext
@@ -97,7 +97,7 @@ export class UserResolver {
     @Arg("options") options: UsernamePasswordInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { username: options.username }); // pls use await for methods that return Promises
+    const user = await em.findOne(User, { username: options.username });
     if (!user) {
       return {
         errors: [
@@ -119,8 +119,10 @@ export class UserResolver {
         ],
       };
     }
-
+    
+    // store cookie in user's browser (aka. sessions)
     req.session.userId = user.id;
+    
     return { user };
   }
 }

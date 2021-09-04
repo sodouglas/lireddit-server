@@ -25,12 +25,4 @@ OR
 `pkill -f node`
 
 `sudo -u postgres psql lireddit`
-
-`pg_ctl -D /home/linuxbrew/.linuxbrew/var/postgres start`
-`/home/linuxbrew/.linuxbrew/opt/postgresql/bin/postgres -D /home/linuxbrew/.linuxbrew/var/postgres`
-
-```
-npx mikro-orm schema:create --dump   # Dumps create schema SQL
-npx mikro-orm schema:update --dump   # Dumps update schema SQL
-npx mikro-orm schema:drop --dump     # Dumps drop schema SQL
-```
+`sudo service postgresql start`
