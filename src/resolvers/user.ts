@@ -7,10 +7,12 @@ import {
   InputType,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
 } from "type-graphql";
 import argon2 from "argon2";
 
+// an input type for username and password
 @InputType()
 class UsernamePasswordInput {
   @Field()
@@ -20,7 +22,7 @@ class UsernamePasswordInput {
   password: string;
 }
 
-// error field with description
+// an error field with a description
 @ObjectType()
 class FieldError {
   @Field()
@@ -30,7 +32,7 @@ class FieldError {
   message: string;
 }
 
-// responds with type User or Error
+// a response for returning either a user or an error 
 @ObjectType()
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
@@ -42,10 +44,24 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+
+  // returns user from current session (via cookies)
+  // -----------------------------------------------
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { em, req }: MyContext) {
+    if (!req.session.userId) {
+      return null;
+    }
+    const user = await em.findOne(User, {id: req.session.userId});
+    return user;
+  }
+
+  // register user
+  // -------------
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em }: MyContext
+    @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     if (options.username.length <= 2) {
       return {
@@ -76,8 +92,7 @@ export class UserResolver {
     try {
       await em.persistAndFlush(user);
     } catch (err) {
-      if (err.code === "23505") {
-        //} || err.detail.includes("already exists")) {
+      if (err.code === "23505") { // if (err.code === "23505" || err.detail.includes("already exists")) {
         // duplicate name error
         return {
           errors: [
@@ -89,9 +104,17 @@ export class UserResolver {
         };
       }
     }
+
+    // session id for current user in cookies
+    req.session.userId = user.id;
+
+    // TODO: log user in after successful register
+
     return { user };
   }
 
+  // login if user exists
+  // --------------------
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UsernamePasswordInput,
@@ -119,10 +142,10 @@ export class UserResolver {
         ],
       };
     }
-    
+
     // store cookie in user's browser (aka. sessions)
     req.session.userId = user.id;
-    
+
     return { user };
   }
 }

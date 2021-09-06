@@ -55,7 +55,7 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 year cookie
         httpOnly: true, // makes cookie unretrievable on frontend
         secure: __prod__, // https only
-        sameSite: "lax", // csrf
+        sameSite: "lax", // csrf(??)
       },
       secret: "hamburger",
       resave: false,
