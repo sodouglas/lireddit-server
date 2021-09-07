@@ -49,6 +49,7 @@ export class UserResolver {
   // -----------------------------------------------
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext) {
+    console.log(req.session);
     if (!req.session.userId) {
       return null;
     }
@@ -143,7 +144,7 @@ export class UserResolver {
       };
     }
 
-    // store cookie in user's browser (aka. sessions)
+    // store session cookie in user's browser
     req.session.userId = user.id;
 
     return { user };

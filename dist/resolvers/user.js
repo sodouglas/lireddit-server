@@ -70,6 +70,7 @@ UserResponse = __decorate([
 let UserResolver = class UserResolver {
     me({ em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.session);
             if (!req.session.userId) {
                 return null;
             }
