@@ -12,6 +12,7 @@ import { MyContext } from "./types";
 import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
+import cors from "cors";
 
 const main = async () => {
   // initialise database
@@ -40,6 +41,15 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
 
+  // enable cors
+  // -----------
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+
   // connect redis session to express (prior to apollo config)
   // - order of middleware = order to run
   // - make sure to run redis-server
@@ -53,7 +63,7 @@ const main = async () => {
       }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 year cookie
-        httpOnly: true, // makes cookie unretrievable on frontend
+        httpOnly: true, // ma kes cookie unretrievable on frontend
         secure: __prod__, // https only
         sameSite: "lax", // csrf
       },
@@ -73,7 +83,10 @@ const main = async () => {
     context: ({ req, res }): MyContext => ({ em: orm.em, req, res }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,  // already set
+  });
 
   app.listen(4000, () => {
     console.log("server started on http://localhost:4000");
